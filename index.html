@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BGH Brand Share — Dashboard Multi-Categoría</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --navy: #1A1F71; --blue: #3483FA; --yellow: #F5C518;
+    --green: #00A650; --red: #E53935; --orange: #FF6D00;
+    --purple: #7E22CE; --teal: #0891B2; --gray: #888888;
+    --bg: #F0F2F8; --card: #FFFFFF; --text: #111827;
+    --muted: #6B7280; --border: #E5E7EB;
+    --ch1: #3483FA; --chTO: #F5C518; --ch3: #CBD5E1;
+    --radius: 14px; --radius-sm: 8px;
+  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  /* ── HEADER ── */
+  .header { background: var(--navy); padding: 28px 40px; display: flex; align-items: center; justify-content: space-between; }
+  .header-left h1 { font-size: 22px; font-weight: 700; color: #fff; letter-spacing: -0.3px; }
+  .header-left p  { font-size: 13px; color: #9CA3C8; margin-top: 4px; }
+  .header-badge { background: var(--yellow); color: var(--navy); font-size: 11px; font-weight: 700; padding: 6px 14px; border-radius: 20px; letter-spacing: 0.5px; }
+  .header-meta { display: flex; gap: 24px; align-items: center; }
+  .header-tag { font-size: 12px; color: #9CA3C8; }
+  .header-tag span { color: #fff; font-weight: 600; }
+
+  /* ── LAYOUT ── */
+  .page { max-width: 1280px; margin: 0 auto; padding: 32px 40px 60px; }
+
+  /* ── SECTION ── */
+  .section-title { font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+  .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .section { margin-bottom: 40px; }
+
+  /* ── KPI STRIP ── */
+  .kpi-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
+  .kpi { background: var(--card); border-radius: var(--radius-sm); border: 1px solid var(--border); padding: 18px 20px; position: relative; overflow: hidden; }
+  .kpi::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--accent, var(--blue)); }
+  .kpi-label { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+  .kpi-val   { font-size: 26px; font-weight: 800; color: var(--text); margin-top: 6px; line-height: 1; }
+  .kpi-sub   { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+  /* ── CHART CARDS ── */
+  .chart-card { background: var(--card); border-radius: var(--radius); border: 1px solid var(--border); padding: 28px 32px; }
+  .chart-card h3 { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .chart-card .sub { font-size: 12px; color: var(--muted); margin-bottom: 20px; }
+
+  /* ── LEGEND ── */
+  .legend { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 16px; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+  .legend-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+
+  /* ── TWO COLUMN ── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  /* ── CATEGORY CARDS ── */
+  .cat-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 12px; }
+  .cat-card { background: var(--card); border-radius: var(--radius); border: 1px solid var(--border); padding: 20px 16px; position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; gap: 0; }
+  .cat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: var(--cat-color, var(--blue)); }
+  .cat-name { font-size: 11px; font-weight: 700; color: var(--text); text-align: center; margin-bottom: 4px; margin-top: 4px; line-height: 1.3; }
+  .cat-tgmv { font-size: 10px; color: var(--muted); margin-bottom: 12px; text-align: center; }
+  .cat-chart-wrap { position: relative; width: 100%; height: 90px; }
+  .cat-bgh-badge { margin-top: 8px; font-size: 13px; font-weight: 800; color: var(--text); }
+  .cat-bgh-label { font-size: 10px; color: var(--muted); }
+  .cat-channels { margin-top: 12px; width: 100%; border-top: 1px solid var(--border); padding-top: 10px; display: flex; flex-direction: column; gap: 5px; }
+  .cat-ch-row { display: flex; align-items: center; justify-content: space-between; font-size: 10px; }
+  .cat-ch-label { color: var(--muted); display: flex; align-items: center; gap: 4px; }
+  .cat-ch-dot { width: 7px; height: 7px; border-radius: 2px; flex-shrink: 0; }
+  .cat-ch-pct { font-weight: 700; color: var(--text); }
+  .badge-zero { font-size: 9px; font-weight: 700; color: var(--red); background: #FEE2E2; padding: 2px 6px; border-radius: 20px; }
+  .badge-best { font-size: 9px; font-weight: 700; color: #065F46; background: #D1FAE5; padding: 2px 6px; border-radius: 20px; }
+
+  /* ── TABLE ── */
+  .summary-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .summary-table th { text-align: left; font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; padding: 10px 14px; border-bottom: 1px solid var(--border); background: #FAFAFA; }
+  .summary-table td { padding: 12px 14px; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: middle; }
+  .summary-table tr:last-child td { border-bottom: none; }
+  .summary-table tr:hover td { background: #F9FAFB; }
+  .rank-badge { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 22px; border-radius: 5px; font-size: 11px; font-weight: 800; }
+  .pct-bar { height: 6px; border-radius: 3px; margin-top: 3px; }
+  .td-num { font-weight: 700; }
+  .td-muted { color: var(--muted); font-size: 12px; }
+  .pill-1p { background: #DBEAFE; color: #1E40AF; padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 700; }
+  .pill-to { background: #FEF9C3; color: #713F12; padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 700; }
+  .pill-3p { background: #F3F4F6; color: #374151; padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 700; }
+  .pill-zero { background: #FEE2E2; color: #991B1B; padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 700; }
+  .flag-col { width: 5px; border-radius: 3px 0 0 3px; padding: 0 !important; }
+
+  /* ── FOOTER ── */
+  .footer { border-top: 1px solid var(--border); padding-top: 20px; margin-top: 40px; display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <h1>BGH en MercadoLibre Argentina</h1>
+    <p>Brand Share · Mix de Canal 1P / Tienda Oficial / 3P Revendedores</p>
+  </div>
+  <div class="header-meta">
+    <div class="header-tag">Seller: <span>NEWSAN 30642617555</span></div>
+    <div class="header-tag">CID: <span>139060460</span></div>
+    <div class="header-tag">Período: <span>Jul 2025 – Abr 2026</span></div>
+    <div class="header-badge">7 CATEGORÍAS</div>
+  </div>
+</div>
+
+<div class="page">
+
+  <!-- KPI STRIP -->
+  <div class="section">
+    <div class="section-title">resumen ejecutivo</div>
+    <div class="kpi-grid">
+      <div class="kpi" style="--accent:#1A1F71">
+        <div class="kpi-label">TGMV Total</div>
+        <div class="kpi-val">$977B</div>
+        <div class="kpi-sub">ARS · 7 categorías</div>
+      </div>
+      <div class="kpi" style="--accent:#00A650">
+        <div class="kpi-label">Mejor BGH Share</div>
+        <div class="kpi-val">25.5%</div>
+        <div class="kpi-sub">Microondas · #1 marca</div>
+      </div>
+      <div class="kpi" style="--accent:#3483FA">
+        <div class="kpi-label">Mejor Tienda Oficial</div>
+        <div class="kpi-val">9.9%</div>
+        <div class="kpi-sub">Aires A/C · $15.2B</div>
+      </div>
+      <div class="kpi" style="--accent:#E53935">
+        <div class="kpi-label">Categorías sin TO</div>
+        <div class="kpi-val">4 / 7</div>
+        <div class="kpi-sub">Hornos · Refri · Mobile · Micro</div>
+      </div>
+      <div class="kpi" style="--accent:#F5C518">
+        <div class="kpi-label">Canal 1P Líder</div>
+        <div class="kpi-val">Televisores</div>
+        <div class="kpi-sub">37.2% · $51.3B venta directa</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOP CHARTS ROW -->
+  <div class="section two-col">
+
+    <!-- BGH BRAND SHARE BAR -->
+    <div class="chart-card">
+      <h3>BGH Brand Share por categoría</h3>
+      <div class="sub">% TGMV — participación de marca BGH sobre el total de la categoría</div>
+      <div style="position:relative;width:100%;height:260px">
+        <canvas id="bghBar" role="img" aria-label="Gráfico de barras horizontales mostrando BGH brand share por categoría. Microondas 25.5%, Aires A/C 12.8%, Hornos 10.3%, Televisores 3.1%, Lavado 2.8%, Refrigeración 2.5%, Mobile 0%."></canvas>
+      </div>
+    </div>
+
+    <!-- CANAL MIX STACKED -->
+    <div class="chart-card">
+      <h3>Mix de canal — 1P · Tienda Oficial · 3P</h3>
+      <div class="sub">% sobre TGMV total de categoría</div>
+      <div class="legend">
+        <span class="legend-item"><span class="legend-dot" style="background:var(--ch1)"></span>1P MercadoLibre</span>
+        <span class="legend-item"><span class="legend-dot" style="background:var(--chTO)"></span>Tienda Oficial NEWSAN</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#94A3B8"></span>3P Revendedores</span>
+      </div>
+      <div style="position:relative;width:100%;height:230px">
+        <canvas id="mixBar" role="img" aria-label="Gráfico de barras apiladas mostrando la participación de canal 1P, Tienda Oficial y 3P revendedores por categoría."></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- CATEGORY CARDS + DONUTS -->
+  <div class="section">
+    <div class="section-title">desglose por categoría</div>
+    <div class="cat-grid" id="catGrid"></div>
+  </div>
+
+  <!-- SUMMARY TABLE -->
+  <div class="section">
+    <div class="section-title">tabla comparativa completa</div>
+    <div class="chart-card" style="padding:0;overflow:hidden">
+      <table class="summary-table">
+        <thead>
+          <tr>
+            <th style="width:5px" class="flag-col"></th>
+            <th>Categoría</th>
+            <th>TGMV</th>
+            <th>BGH Rank</th>
+            <th>BGH Share</th>
+            <th>1P Share</th>
+            <th>Tienda Oficial</th>
+            <th>3P Revendedores</th>
+            <th>Estado canal TO</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span>BGH · CUST ID 139060460 · NEWSAN 30642617555 · MercadoLibre Argentina · Jul 2025 – Abr 2026</span>
+    <span>1P = MMLBULKYAR00226 / ML Electronica · TO = NEWSAN 30642617555 · 3P = Revendedores externos</span>
+  </div>
+
+</div>
+
+<script>
+const CATS = [
+  { name:'Aires A/C',      tgmv:153.5, bghPct:12.8, bghRank:'#2',  oneP:28.7, to:9.9,  tres:61.4, onePv:44.1, tov:15.2, tresv:94.2,  color:'#3483FA', toStatus:'active' },
+  { name:'Microondas',     tgmv:21.6,  bghPct:25.5, bghRank:'#1',  oneP:14.6, to:0.6,  tres:84.8, onePv:3.1,  tov:0.1,  tresv:18.3,  color:'#00A650', toStatus:'minimal' },
+  { name:'Hornos',         tgmv:27.6,  bghPct:10.3, bghRank:'#3',  oneP:5.0,  to:0.0,  tres:95.0, onePv:1.4,  tov:0.0,  tresv:26.2,  color:'#FF6D00', toStatus:'none' },
+  { name:'Televisores',    tgmv:137.9, bghPct:3.1,  bghRank:'#8',  oneP:37.2, to:8.1,  tres:54.7, onePv:51.3, tov:11.2, tresv:75.4,  color:'#7E22CE', toStatus:'active' },
+  { name:'Lavado',         tgmv:108.8, bghPct:2.8,  bghRank:'#9',  oneP:18.3, to:2.4,  tres:79.3, onePv:19.9, tov:2.6,  tresv:86.3,  color:'#0891B2', toStatus:'minimal' },
+  { name:'Refrigeración',  tgmv:110.8, bghPct:2.5,  bghRank:'#11', oneP:7.5,  to:0.0,  tres:92.5, onePv:8.4,  tov:0.0,  tresv:102.4, color:'#E53935', toStatus:'none' },
+  { name:'Mobile',         tgmv:416.7, bghPct:0.0,  bghRank:'N/D', oneP:31.3, to:0.0,  tres:68.7, onePv:130.5,tov:0.0,  tresv:286.2, color:'#94A3B8', toStatus:'none' },
+];
+
+const CH1  = '#3483FA';
+const CHTO = '#F5C518';
+const CH3  = '#CBD5E1';
+
+// ── BGH BRAND SHARE HORIZONTAL BAR ──────────────────────────────────
+const sorted = [...CATS].sort((a,b)=>b.bghPct - a.bghPct);
+new Chart(document.getElementById('bghBar'), {
+  type: 'bar',
+  data: {
+    labels: sorted.map(c=>c.name),
+    datasets: [{
+      label: 'BGH Share TGMV (%)',
+      data: sorted.map(c=>c.bghPct),
+      backgroundColor: sorted.map(c=>c.color),
+      borderRadius: 6,
+      borderSkipped: false,
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => ` ${ctx.parsed.x.toFixed(1)}% del TGMV de categoría`
+        }
+      }
+    },
+    scales: {
+      x: {
+        min: 0, max: 30,
+        grid: { color: '#F3F4F6' },
+        ticks: { callback: v => v + '%', font: { size: 11 }, color: '#9CA3AF' },
+        border: { display: false }
+      },
+      y: {
+        grid: { display: false },
+        ticks: { font: { size: 12, weight: '600' }, color: '#374151' },
+        border: { display: false }
+      }
+    }
+  }
+});
+
+// ── CANAL MIX STACKED ────────────────────────────────────────────────
+new Chart(document.getElementById('mixBar'), {
+  type: 'bar',
+  data: {
+    labels: CATS.map(c=>c.name),
+    datasets: [
+      { label: '1P MercadoLibre',       data: CATS.map(c=>c.oneP), backgroundColor: CH1,  borderRadius: 0, stack: 'canal' },
+      { label: 'Tienda Oficial NEWSAN',  data: CATS.map(c=>c.to),   backgroundColor: CHTO, borderRadius: 0, stack: 'canal' },
+      { label: '3P Revendedores',        data: CATS.map(c=>c.tres), backgroundColor: CH3,  borderRadius: 0, stack: 'canal' },
+    ]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.x.toFixed(1)}%` }
+      }
+    },
+    scales: {
+      x: {
+        min:0, max:100, stacked: true,
+        grid: { color: '#F3F4F6' },
+        ticks: { callback: v => v + '%', font: { size: 11 }, color: '#9CA3AF' },
+        border: { display: false }
+      },
+      y: {
+        stacked: true,
+        grid: { display: false },
+        ticks: { font: { size: 12, weight: '600' }, color: '#374151' },
+        border: { display: false }
+      }
+    }
+  }
+});
+
+// ── CATEGORY CARDS + DONUT ────────────────────────────────────────────
+const catGrid = document.getElementById('catGrid');
+CATS.forEach((cat, i) => {
+  const card = document.createElement('div');
+  card.className = 'cat-card';
+  card.style.setProperty('--cat-color', cat.color);
+
+  const toDisplay = cat.to > 0 ? cat.to.toFixed(1) + '%' : '0%';
+  const toClass   = cat.to > 5 ? 'badge-best' : cat.to > 0 ? '' : 'badge-zero';
+  const toLabel   = cat.to > 5 ? toDisplay : cat.to > 0 ? toDisplay : '0%';
+
+  card.innerHTML = `
+    <div class="cat-name">${cat.name}</div>
+    <div class="cat-tgmv">$${cat.tgmv}B TGMV</div>
+    <div class="cat-chart-wrap">
+      <canvas id="donut${i}" role="img" aria-label="Donut chart de mix de canal para ${cat.name}"></canvas>
+    </div>
+    <div class="cat-bgh-badge">${cat.bghPct > 0 ? cat.bghPct + '%' : '—'}</div>
+    <div class="cat-bgh-label">BGH · Rank ${cat.bghRank}</div>
+    <div class="cat-channels">
+      <div class="cat-ch-row">
+        <span class="cat-ch-label"><span class="cat-ch-dot" style="background:${CH1}"></span>1P</span>
+        <span class="cat-ch-pct">${cat.oneP.toFixed(1)}%</span>
+      </div>
+      <div class="cat-ch-row">
+        <span class="cat-ch-label"><span class="cat-ch-dot" style="background:${CHTO}"></span>TO</span>
+        <span class="${cat.to > 5 ? 'badge-best' : cat.to > 0 ? 'cat-ch-pct' : 'badge-zero'}">${toLabel}</span>
+      </div>
+      <div class="cat-ch-row">
+        <span class="cat-ch-label"><span class="cat-ch-dot" style="background:#94A3B8"></span>3P</span>
+        <span class="cat-ch-pct">${cat.tres.toFixed(1)}%</span>
+      </div>
+    </div>`;
+  catGrid.appendChild(card);
+
+  new Chart(document.getElementById('donut' + i), {
+    type: 'doughnut',
+    data: {
+      labels: ['1P','T.Oficial','3P'],
+      datasets: [{
+        data: [cat.oneP, Math.max(cat.to, 0.5), cat.tres],
+        backgroundColor: [CH1, CHTO, CH3],
+        borderWidth: 0,
+        hoverOffset: 4,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '68%',
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => ` ${ctx.label}: ${ctx.label === 'T.Oficial' ? cat.to.toFixed(1) : ctx.parsed.toFixed(1)}%`
+          }
+        }
+      }
+    }
+  });
+});
+
+// ── TABLE ─────────────────────────────────────────────────────────────
+const tbody = document.getElementById('tableBody');
+CATS.forEach(cat => {
+  const toStatusMap = {
+    active:  { label: 'Activa', cls: 'badge-best' },
+    minimal: { label: 'Mínima', cls: 'pill-to' },
+    none:    { label: 'Sin presencia', cls: 'badge-zero' },
+  };
+  const ts = toStatusMap[cat.toStatus];
+  const rankColor = cat.bghRank === '#1' ? '#00A650' : cat.bghRank === 'N/D' ? '#E53935' : '#1A1F71';
+
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td class="flag-col" style="background:${cat.color}"></td>
+    <td style="font-weight:700">${cat.name}</td>
+    <td class="td-num">$${cat.tgmv}B</td>
+    <td><span class="rank-badge" style="background:${rankColor}18;color:${rankColor}">${cat.bghRank}</span></td>
+    <td>
+      <div style="font-weight:700;font-size:14px">${cat.bghPct > 0 ? cat.bghPct + '%' : '—'}</div>
+      <div class="pct-bar" style="width:${cat.bghPct * 3}%;background:${cat.color};max-width:80px;min-width:${cat.bghPct>0?'6px':'0'}"></div>
+    </td>
+    <td><span class="pill-1p">${cat.oneP.toFixed(1)}%</span><div class="td-muted" style="margin-top:2px">$${cat.onePv.toFixed(1)}B</div></td>
+    <td>
+      ${cat.to > 0
+        ? `<span class="${cat.to > 5 ? 'badge-best' : 'pill-to'}">${cat.to.toFixed(1)}%</span><div class="td-muted" style="margin-top:2px">$${cat.tov.toFixed(1)}B</div>`
+        : `<span class="badge-zero">0%</span>`}
+    </td>
+    <td><span class="pill-3p">${cat.tres.toFixed(1)}%</span><div class="td-muted" style="margin-top:2px">$${cat.tresv.toFixed(1)}B</div></td>
+    <td><span class="${ts.cls}">${ts.label}</span></td>`;
+  tbody.appendChild(tr);
+});
+</script>
+</body>
+</html>
