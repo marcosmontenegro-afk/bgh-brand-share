@@ -37,6 +37,7 @@
 
   /* ── KPI STRIP ── */
   .kpi-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
+  .cat-tgmv { display: none; }
   .kpi { background: var(--card); border-radius: var(--radius-sm); border: 1px solid var(--border); padding: 18px 20px; position: relative; overflow: hidden; }
   .kpi::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--accent, var(--blue)); }
   .kpi-label { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
@@ -114,11 +115,6 @@
   <div class="section">
     <div class="section-title">resumen ejecutivo</div>
     <div class="kpi-grid">
-      <div class="kpi" style="--accent:#1A1F71">
-        <div class="kpi-label">TGMV Total</div>
-        <div class="kpi-val">$977B</div>
-        <div class="kpi-sub">ARS · 7 categorías</div>
-      </div>
       <div class="kpi" style="--accent:#00A650">
         <div class="kpi-label">Mejor BGH Share</div>
         <div class="kpi-val">25.5%</div>
@@ -127,7 +123,7 @@
       <div class="kpi" style="--accent:#3483FA">
         <div class="kpi-label">Mejor Tienda Oficial</div>
         <div class="kpi-val">9.9%</div>
-        <div class="kpi-sub">Aires A/C · $15.2B</div>
+        <div class="kpi-sub">Aires A/C</div>
       </div>
       <div class="kpi" style="--accent:#E53935">
         <div class="kpi-label">Categorías sin TO</div>
@@ -137,7 +133,12 @@
       <div class="kpi" style="--accent:#F5C518">
         <div class="kpi-label">Canal 1P Líder</div>
         <div class="kpi-val">Televisores</div>
-        <div class="kpi-sub">37.2% · $51.3B venta directa</div>
+        <div class="kpi-sub">37.2% venta directa</div>
+      </div>
+      <div class="kpi" style="--accent:#1A1F71">
+        <div class="kpi-label">3P Domina en</div>
+        <div class="kpi-val">5 / 7</div>
+        <div class="kpi-sub">Categorías con +50% revendedores</div>
       </div>
     </div>
   </div>
@@ -184,7 +185,6 @@
           <tr>
             <th style="width:5px" class="flag-col"></th>
             <th>Categoría</th>
-            <th>TGMV</th>
             <th>BGH Rank</th>
             <th>BGH Share</th>
             <th>1P Share</th>
@@ -377,19 +377,18 @@ CATS.forEach(cat => {
   tr.innerHTML = `
     <td class="flag-col" style="background:${cat.color}"></td>
     <td style="font-weight:700">${cat.name}</td>
-    <td class="td-num">$${cat.tgmv}B</td>
     <td><span class="rank-badge" style="background:${rankColor}18;color:${rankColor}">${cat.bghRank}</span></td>
     <td>
       <div style="font-weight:700;font-size:14px">${cat.bghPct > 0 ? cat.bghPct + '%' : '—'}</div>
       <div class="pct-bar" style="width:${cat.bghPct * 3}%;background:${cat.color};max-width:80px;min-width:${cat.bghPct>0?'6px':'0'}"></div>
     </td>
-    <td><span class="pill-1p">${cat.oneP.toFixed(1)}%</span><div class="td-muted" style="margin-top:2px">$${cat.onePv.toFixed(1)}B</div></td>
+    <td><span class="pill-1p">${cat.oneP.toFixed(1)}%</span></td>
     <td>
       ${cat.to > 0
-        ? `<span class="${cat.to > 5 ? 'badge-best' : 'pill-to'}">${cat.to.toFixed(1)}%</span><div class="td-muted" style="margin-top:2px">$${cat.tov.toFixed(1)}B</div>`
+        ? `<span class="${cat.to > 5 ? 'badge-best' : 'pill-to'}">${cat.to.toFixed(1)}%</span>`
         : `<span class="badge-zero">0%</span>`}
     </td>
-    <td><span class="pill-3p">${cat.tres.toFixed(1)}%</span><div class="td-muted" style="margin-top:2px">$${cat.tresv.toFixed(1)}B</div></td>
+    <td><span class="pill-3p">${cat.tres.toFixed(1)}%</span></td>
     <td><span class="${ts.cls}">${ts.label}</span></td>`;
   tbody.appendChild(tr);
 });
