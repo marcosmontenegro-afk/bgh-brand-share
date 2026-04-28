@@ -170,6 +170,31 @@
     </div>
   </div>
 
+  <!-- BRAND PIE CHART + BRAND BY CATEGORY STACKED -->
+  <div class="section two-col">
+
+    <!-- PIE: Portfolio mix total -->
+    <div class="chart-card">
+      <h3>Mix de marcas — Portfolio total VENTASELECTROCE</h3>
+      <div class="sub">% sobre NMV total del seller · todas las categorías consolidadas</div>
+      <div style="display:flex;align-items:center;gap:24px">
+        <div style="position:relative;width:220px;height:220px;flex-shrink:0">
+          <canvas id="brandPie" role="img" aria-label="Torta de mix de marcas del seller"></canvas>
+        </div>
+        <div id="brandPieLegend" style="flex:1;display:flex;flex-direction:column;gap:10px"></div>
+      </div>
+    </div>
+
+    <!-- STACKED BAR: Brand share per category -->
+    <div class="chart-card">
+      <h3>Share por marca y categoría</h3>
+      <div class="sub">NMV seller / TGMV — desglosado por marca · % sobre TGMV de cada categoría</div>
+      <div style="position:relative;width:100%;height:260px">
+        <canvas id="brandStack" role="img" aria-label="Barras apiladas de share de marcas del seller por categoría"></canvas>
+      </div>
+    </div>
+  </div>
+
   <!-- CATEGORY CARDS + DONUTS -->
   <div class="section">
     <div class="section-title">desglose por categoría</div>
@@ -374,6 +399,128 @@ CATS.forEach((cat, i) => {
       }
     }
   });
+});
+
+// ── BRAND PIE + STACKED ───────────────────────────────────────────────
+// Aggregate brand NMV across all cats: brands[].p is % of TGMV → multiply by tgmv
+const BRAND_COLORS = {
+  'BGH':        '#1A1F71',
+  'Samsung':    '#3483FA',
+  'Likon':      '#0891B2',
+  'Tramontina': '#FF6D00',
+  'Tecno':      '#7E22CE',
+  'Otros':      '#CBD5E1',
+};
+const brandTotals = {};
+CATS.forEach(cat => {
+  cat.brands.forEach(br => {
+    const nmv = (br.p / 100) * cat.tgmv; // billions
+    brandTotals[br.b] = (brandTotals[br.b] || 0) + nmv;
+  });
+});
+const brandEntries = Object.entries(brandTotals).sort((a,b)=>b[1]-a[1]);
+const totalSellerNmv = brandEntries.reduce((s,[,v])=>s+v, 0);
+
+// PIE CHART
+new Chart(document.getElementById('brandPie'), {
+  type: 'doughnut',
+  data: {
+    labels: brandEntries.map(([b])=>b),
+    datasets: [{
+      data: brandEntries.map(([,v])=>v),
+      backgroundColor: brandEntries.map(([b])=> BRAND_COLORS[b] || '#CBD5E1'),
+      borderWidth: 2,
+      borderColor: '#fff',
+      hoverOffset: 6,
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    cutout: '62%',
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => {
+            const pct = (ctx.parsed / totalSellerNmv * 100).toFixed(1);
+            return ` ${ctx.label}: ${pct}% ($${ctx.parsed.toFixed(2)}B)`;
+          }
+        }
+      }
+    }
+  }
+});
+
+// PIE LEGEND
+const pieLegend = document.getElementById('brandPieLegend');
+brandEntries.forEach(([brand, nmv]) => {
+  const pct = (nmv / totalSellerNmv * 100).toFixed(1);
+  const color = BRAND_COLORS[brand] || '#CBD5E1';
+  const el = document.createElement('div');
+  el.style.cssText = 'display:flex;align-items:center;gap:10px';
+  el.innerHTML = `
+    <span style="width:12px;height:12px;border-radius:3px;background:${color};flex-shrink:0"></span>
+    <div style="flex:1">
+      <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700;color:#111827">
+        <span>${brand}</span><span>${pct}%</span>
+      </div>
+      <div style="background:#F3F4F6;border-radius:4px;height:5px;margin-top:3px;overflow:hidden">
+        <div style="width:${pct}%;background:${color};height:100%;border-radius:4px"></div>
+      </div>
+      <div style="font-size:10px;color:#9CA3AF;margin-top:2px">$${nmv.toFixed(2)}B ARS</div>
+    </div>`;
+  pieLegend.appendChild(el);
+});
+
+// STACKED BAR PER CATEGORY
+const allBrands = brandEntries.map(([b])=>b);
+new Chart(document.getElementById('brandStack'), {
+  type: 'bar',
+  data: {
+    labels: CATS.map(c => c.name),
+    datasets: allBrands.map(brand => ({
+      label: brand,
+      data: CATS.map(cat => {
+        const found = cat.brands.find(br => br.b === brand);
+        return found ? found.p : 0;
+      }),
+      backgroundColor: BRAND_COLORS[brand] || '#CBD5E1',
+      borderRadius: 0,
+      stack: 'brands',
+    }))
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: true,
+        position: 'top',
+        labels: { boxWidth: 12, font: { size: 11 }, padding: 12 }
+      },
+      tooltip: {
+        callbacks: {
+          label: ctx => ctx.parsed.x > 0 ? ` ${ctx.dataset.label}: ${ctx.parsed.x.toFixed(1)}% TGMV` : null
+        }
+      }
+    },
+    scales: {
+      x: {
+        min:0, max:12, stacked: true,
+        grid: { color: '#F3F4F6' },
+        ticks: { callback: v => v + '%', font: { size: 11 }, color: '#9CA3AF' },
+        border: { display: false }
+      },
+      y: {
+        stacked: true,
+        grid: { display: false },
+        ticks: { font: { size: 11, weight: '600' }, color: '#374151' },
+        border: { display: false }
+      }
+    }
+  }
 });
 
 // ── TABLE ─────────────────────────────────────────────────────────────
