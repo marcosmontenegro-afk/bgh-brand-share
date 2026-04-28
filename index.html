@@ -148,8 +148,8 @@
 
     <!-- BGH BRAND SHARE BAR -->
     <div class="chart-card">
-      <h3>BGH (Seller) Brand Share por categoría</h3>
-      <div class="sub">% TGMV — todas las marcas vendidas por la Tienda Oficial (BGH + Likon + Samsung + Tramontina)</div>
+      <h3>BGH (Seller) Brand Share por categoría — 7 categorías</h3>
+      <div class="sub">% TGMV — suma de todas las marcas vendidas por VENTASELECTROCE · Aires: BGH+Samsung+Likon · Micro: BGH+Tramontina · Resto: BGH</div>
       <div style="position:relative;width:100%;height:260px">
         <canvas id="bghBar" role="img" aria-label="Gráfico de barras horizontales mostrando BGH brand share por categoría. Microondas 27.3%, Aires A/C 18.3%, Hornos 10.3%, Televisores 3.1%, Lavado 2.8%, Refrigeración 2.5%, Mobile 0%."></canvas>
       </div>
@@ -185,8 +185,8 @@
           <tr>
             <th style="width:5px" class="flag-col"></th>
             <th>Categoría</th>
-            <th>BGH Rank</th>
-            <th>BGH Share</th>
+            <th>Rank Seller</th>
+            <th>Seller Share (todas marcas)</th>
             <th>1P Share</th>
             <th>Tienda Oficial</th>
             <th>3P Revendedores</th>
@@ -208,14 +208,22 @@
 <script>
 // Canal breakdown: 1P=ML directo | TO=VENTASELECTROCE (CID 139060460) | 3P=resto
 // Denominador: TGMV total de categoría (no solo top 50)
+// brands: marcas vendidas por VENTASELECTROCE en cada categoría (verificado item a item)
 const CATS = [
-  { name:'Aires A/C',     tgmv:153.5, bghPct:18.3, bghRank:'#2',  oneP:28.7, to:10.2, tres:61.1, color:'#3483FA', toStatus:'active'  },
-  { name:'Microondas',    tgmv:21.6,  bghPct:27.3, bghRank:'#1',  oneP:14.6, to:4.9,  tres:80.5, color:'#00A650', toStatus:'minimal' },
-  { name:'Hornos',        tgmv:27.6,  bghPct:10.3, bghRank:'#3',  oneP:5.0,  to:2.8,  tres:92.2, color:'#FF6D00', toStatus:'minimal' },
-  { name:'Televisores',   tgmv:137.9, bghPct:3.1,  bghRank:'#8',  oneP:37.2, to:0.6,  tres:62.2, color:'#7E22CE', toStatus:'minimal' },
-  { name:'Lavado',        tgmv:108.8, bghPct:2.8,  bghRank:'#9',  oneP:18.3, to:0.7,  tres:81.0, color:'#0891B2', toStatus:'minimal' },
-  { name:'Refrigeración', tgmv:110.8, bghPct:2.5,  bghRank:'#11', oneP:7.5,  to:0.6,  tres:91.9, color:'#E53935', toStatus:'minimal' },
-  { name:'Mobile',        tgmv:416.7, bghPct:0.0,  bghRank:'N/D', oneP:31.3, to:0.4,  tres:68.3, color:'#94A3B8', toStatus:'minimal' },
+  { name:'Aires A/C',     tgmv:153.5, bghPct:18.3, bghRank:'#2',  oneP:28.7, to:10.2, tres:61.1, color:'#3483FA', toStatus:'active',
+    brands:[{b:'BGH',p:12.8},{b:'Samsung',p:4.4},{b:'Likon',p:1.1}] },
+  { name:'Microondas',    tgmv:21.6,  bghPct:27.3, bghRank:'#1',  oneP:14.6, to:4.9,  tres:80.5, color:'#00A650', toStatus:'minimal',
+    brands:[{b:'BGH',p:25.5},{b:'Tramontina',p:1.8}] },
+  { name:'Hornos',        tgmv:27.6,  bghPct:10.3, bghRank:'#3',  oneP:5.0,  to:2.8,  tres:92.2, color:'#FF6D00', toStatus:'minimal',
+    brands:[{b:'BGH',p:10.3}] },
+  { name:'Televisores',   tgmv:137.9, bghPct:3.1,  bghRank:'#8',  oneP:37.2, to:0.6,  tres:62.2, color:'#7E22CE', toStatus:'minimal',
+    brands:[{b:'BGH',p:3.1}] },
+  { name:'Lavado',        tgmv:108.8, bghPct:2.8,  bghRank:'#9',  oneP:18.3, to:0.7,  tres:81.0, color:'#0891B2', toStatus:'minimal',
+    brands:[{b:'BGH',p:2.8}] },
+  { name:'Refrigeración', tgmv:110.8, bghPct:2.5,  bghRank:'#11', oneP:7.5,  to:0.6,  tres:91.9, color:'#E53935', toStatus:'minimal',
+    brands:[{b:'BGH',p:2.5}] },
+  { name:'Mobile',        tgmv:416.7, bghPct:0.0,  bghRank:'N/D', oneP:31.3, to:0.4,  tres:68.3, color:'#94A3B8', toStatus:'minimal',
+    brands:[{b:'BGH',p:0.0}] },
 ];
 
 const CH1  = '#3483FA';
@@ -313,6 +321,8 @@ CATS.forEach((cat, i) => {
   const toClass   = cat.to > 5 ? 'badge-best' : cat.to > 0 ? '' : 'badge-zero';
   const toLabel   = cat.to > 5 ? toDisplay : cat.to > 0 ? toDisplay : '0%';
 
+  const brandsHtml = cat.brands.filter(x=>x.p>0).map(x=>`<span style="font-size:9px;color:#6B7280">${x.b} ${x.p}%</span>`).join(' + ');
+
   card.innerHTML = `
     <div class="cat-name">${cat.name}</div>
     <div class="cat-tgmv">$${cat.tgmv}B TGMV</div>
@@ -320,7 +330,8 @@ CATS.forEach((cat, i) => {
       <canvas id="donut${i}" role="img" aria-label="Donut chart de mix de canal para ${cat.name}"></canvas>
     </div>
     <div class="cat-bgh-badge">${cat.bghPct > 0 ? cat.bghPct + '%' : '—'}</div>
-    <div class="cat-bgh-label">BGH · Rank ${cat.bghRank}</div>
+    <div class="cat-bgh-label">Seller Share · Rank ${cat.bghRank}</div>
+    <div style="margin-top:4px;text-align:center;line-height:1.5;min-height:14px">${brandsHtml || '<span style="font-size:9px;color:#E53935">sin ventas</span>'}</div>
     <div class="cat-channels">
       <div class="cat-ch-row">
         <span class="cat-ch-label"><span class="cat-ch-dot" style="background:${CH1}"></span>1P</span>
@@ -383,6 +394,7 @@ CATS.forEach(cat => {
     <td>
       <div style="font-weight:700;font-size:14px">${cat.bghPct > 0 ? cat.bghPct + '%' : '—'}</div>
       <div class="pct-bar" style="width:${cat.bghPct * 3}%;background:${cat.color};max-width:80px;min-width:${cat.bghPct>0?'6px':'0'}"></div>
+      <div style="font-size:10px;color:#9CA3AF;margin-top:2px">${cat.brands.filter(x=>x.p>0).map(x=>x.b).join(' + ') || 'sin ventas'}</div>
     </td>
     <td><span class="pill-1p">${cat.oneP.toFixed(1)}%</span></td>
     <td>
