@@ -122,13 +122,13 @@
       </div>
       <div class="kpi" style="--accent:#3483FA">
         <div class="kpi-label">Mejor Tienda Oficial</div>
-        <div class="kpi-val">9.9%</div>
-        <div class="kpi-sub">Aires A/C</div>
+        <div class="kpi-val">10.2%</div>
+        <div class="kpi-sub">Aires A/C · Rank #2</div>
       </div>
       <div class="kpi" style="--accent:#E53935">
-        <div class="kpi-label">Categorías sin TO</div>
-        <div class="kpi-val">4 / 7</div>
-        <div class="kpi-sub">Hornos · Refri · Mobile · Micro</div>
+        <div class="kpi-label">TO baja presencia</div>
+        <div class="kpi-val">6 / 7</div>
+        <div class="kpi-sub">Solo Aires A/C supera el 5%</div>
       </div>
       <div class="kpi" style="--accent:#F5C518">
         <div class="kpi-label">Canal 1P Líder</div>
@@ -206,14 +206,16 @@
 </div>
 
 <script>
+// Canal breakdown: 1P=ML directo | TO=VENTASELECTROCE (CID 139060460) | 3P=resto
+// Denominador: TGMV total de categoría (no solo top 50)
 const CATS = [
-  { name:'Aires A/C',      tgmv:153.5, bghPct:12.8, bghRank:'#2',  oneP:28.7, to:9.9,  tres:61.4, onePv:44.1, tov:15.2, tresv:94.2,  color:'#3483FA', toStatus:'active' },
-  { name:'Microondas',     tgmv:21.6,  bghPct:25.5, bghRank:'#1',  oneP:14.6, to:0.6,  tres:84.8, onePv:3.1,  tov:0.1,  tresv:18.3,  color:'#00A650', toStatus:'minimal' },
-  { name:'Hornos',         tgmv:27.6,  bghPct:10.3, bghRank:'#3',  oneP:5.0,  to:0.0,  tres:95.0, onePv:1.4,  tov:0.0,  tresv:26.2,  color:'#FF6D00', toStatus:'none' },
-  { name:'Televisores',    tgmv:137.9, bghPct:3.1,  bghRank:'#8',  oneP:37.2, to:8.1,  tres:54.7, onePv:51.3, tov:11.2, tresv:75.4,  color:'#7E22CE', toStatus:'active' },
-  { name:'Lavado',         tgmv:108.8, bghPct:2.8,  bghRank:'#9',  oneP:18.3, to:2.4,  tres:79.3, onePv:19.9, tov:2.6,  tresv:86.3,  color:'#0891B2', toStatus:'minimal' },
-  { name:'Refrigeración',  tgmv:110.8, bghPct:2.5,  bghRank:'#11', oneP:7.5,  to:0.0,  tres:92.5, onePv:8.4,  tov:0.0,  tresv:102.4, color:'#E53935', toStatus:'none' },
-  { name:'Mobile',         tgmv:416.7, bghPct:0.0,  bghRank:'N/D', oneP:31.3, to:0.0,  tres:68.7, onePv:130.5,tov:0.0,  tresv:286.2, color:'#94A3B8', toStatus:'none' },
+  { name:'Aires A/C',     tgmv:153.5, bghPct:12.8, bghRank:'#2',  oneP:28.7, to:10.2, tres:61.1, color:'#3483FA', toStatus:'active'  },
+  { name:'Microondas',    tgmv:21.6,  bghPct:25.5, bghRank:'#1',  oneP:14.6, to:4.9,  tres:80.5, color:'#00A650', toStatus:'minimal' },
+  { name:'Hornos',        tgmv:27.6,  bghPct:10.3, bghRank:'#3',  oneP:5.0,  to:2.8,  tres:92.2, color:'#FF6D00', toStatus:'minimal' },
+  { name:'Televisores',   tgmv:137.9, bghPct:3.1,  bghRank:'#8',  oneP:37.2, to:0.6,  tres:62.2, color:'#7E22CE', toStatus:'minimal' },
+  { name:'Lavado',        tgmv:108.8, bghPct:2.8,  bghRank:'#9',  oneP:18.3, to:0.7,  tres:81.0, color:'#0891B2', toStatus:'minimal' },
+  { name:'Refrigeración', tgmv:110.8, bghPct:2.5,  bghRank:'#11', oneP:7.5,  to:0.6,  tres:91.9, color:'#E53935', toStatus:'minimal' },
+  { name:'Mobile',        tgmv:416.7, bghPct:0.0,  bghRank:'N/D', oneP:31.3, to:0.4,  tres:68.3, color:'#94A3B8', toStatus:'minimal' },
 ];
 
 const CH1  = '#3483FA';
