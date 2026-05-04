@@ -104,7 +104,7 @@
   <div class="header-meta">
     <div class="header-tag">Seller: <span>Tienda Oficial</span></div>
     <div class="header-tag">CID: <span>139060460</span></div>
-    <div class="header-tag">Período: <span>Jul 2025 – Abr 2026</span></div>
+    <div class="header-tag">Período: <span>Ene 2026 – Mar 2026</span></div>
     <div class="header-badge">7 CATEGORÍAS</div>
   </div>
 </div>
@@ -117,23 +117,23 @@
     <div class="kpi-grid">
       <div class="kpi" style="--accent:#00A650">
         <div class="kpi-label">Mejor Brand Share</div>
-        <div class="kpi-val">27.3%</div>
-        <div class="kpi-sub">Microondas · BGH #1 marca</div>
+        <div class="kpi-val">29.6%</div>
+        <div class="kpi-sub">Microondas · BGH+Tramontina #1</div>
       </div>
       <div class="kpi" style="--accent:#3483FA">
         <div class="kpi-label">Mejor TO Share</div>
-        <div class="kpi-val">10.2%</div>
+        <div class="kpi-val">14.3%</div>
         <div class="kpi-sub">Aires A/C · VENTASELECTROCE rank #2</div>
       </div>
       <div class="kpi" style="--accent:#E53935">
         <div class="kpi-label">TO baja presencia</div>
-        <div class="kpi-val">6 / 7</div>
-        <div class="kpi-sub">Solo Aires A/C supera el 5%</div>
+        <div class="kpi-val">5 / 7</div>
+        <div class="kpi-sub">Aires A/C y Micro superan 5% TGMV</div>
       </div>
       <div class="kpi" style="--accent:#F5C518">
         <div class="kpi-label">Canal 1P Líder</div>
-        <div class="kpi-val">Televisores</div>
-        <div class="kpi-sub">37.2% venta directa</div>
+        <div class="kpi-val">Lavado</div>
+        <div class="kpi-sub">34.4% venta directa</div>
       </div>
       <div class="kpi" style="--accent:#1A1F71">
         <div class="kpi-label">3P Domina en</div>
@@ -151,7 +151,7 @@
       <h3>BGH Brand Share por categoría (7 categorías)</h3>
       <div class="sub">NMV total de la MARCA / TGMV (todas las tiendas) · Aires: BGH+Samsung+Likon · Micro: BGH+Tramontina · Mobile: Tecno · Resto: BGH</div>
       <div style="position:relative;width:100%;height:260px">
-        <canvas id="bghBar" role="img" aria-label="BGH brand share por categoría. Microondas 27.3%, Aires A/C 18.3%, Hornos 10.3%, Televisores 3.1%, Lavado 2.8%, Refrigeración 2.5%, Mobile 0.9%."></canvas>
+        <canvas id="bghBar" role="img" aria-label="BGH brand share por categoría Q1 2026. Microondas 29.6%, Aires A/C 25.8%, Hornos 9.9%, Lavado 4.5%, Televisores 3.3%, Refrigeración 3.8%, Mobile 0.9%."></canvas>
       </div>
     </div>
 
@@ -224,7 +224,7 @@
   </div>
 
   <div class="footer">
-    <span>BGH · CUST ID 139060460 · Tienda Oficial · MercadoLibre Argentina · Jul 2025 – Abr 2026</span>
+    <span>BGH · CUST ID 139060460 · Tienda Oficial · MercadoLibre Argentina · Ene 2026 – Mar 2026</span>
     <span>1P = MMLBULKYAR00226 / ML Electronica · TO = Tienda Oficial · 3P = Revendedores externos</span>
   </div>
 
@@ -238,19 +238,19 @@
 // oneP/to/tres = % del NMV total de la MARCA (BGH/Tecno) por canal ← mix del brand, no del mercado
 //   TO = VENTASELECTROCE share dentro del brand NMV
 const CATS = [
-  { name:'Aires A/C',     tgmv:153.5, bghPct:18.3, bghRank:'#2',  oneP:0.0,  to:52.1, tres:47.9, color:'#3483FA', toStatus:'active',
-    brands:[{b:'BGH',p:12.8},{b:'Samsung',p:4.4},{b:'Likon',p:1.1}] },
-  { name:'Microondas',    tgmv:21.6,  bghPct:27.3, bghRank:'#1',  oneP:11.5, to:14.2, tres:74.3, color:'#00A650', toStatus:'minimal',
-    brands:[{b:'BGH',p:25.5},{b:'Tramontina',p:1.8}] },
-  { name:'Hornos',        tgmv:27.6,  bghPct:10.3, bghRank:'#3',  oneP:7.0,  to:27.5, tres:65.5, color:'#FF6D00', toStatus:'minimal',
-    brands:[{b:'BGH',p:10.3}] },
-  { name:'Televisores',   tgmv:137.9, bghPct:3.1,  bghRank:'#8',  oneP:0.0,  to:19.2, tres:80.8, color:'#7E22CE', toStatus:'minimal',
-    brands:[{b:'BGH',p:3.1}] },
-  { name:'Lavado',        tgmv:108.8, bghPct:2.8,  bghRank:'#9',  oneP:34.4, to:24.9, tres:40.6, color:'#0891B2', toStatus:'minimal',
-    brands:[{b:'BGH',p:2.8}] },
-  { name:'Refrigeración', tgmv:110.8, bghPct:2.5,  bghRank:'#11', oneP:18.0, to:22.5, tres:59.5, color:'#E53935', toStatus:'minimal',
-    brands:[{b:'BGH',p:2.5}] },
-  { name:'Mobile',        tgmv:416.7, bghPct:0.9,  bghRank:'#8',  oneP:0.0,  to:40.1, tres:59.9, color:'#94A3B8', toStatus:'minimal',
+  { name:'Aires A/C',     tgmv:37.1,  bghPct:25.8, bghRank:'#2',  oneP:0.0,  to:55.6, tres:44.4, color:'#3483FA', toStatus:'active',
+    brands:[{b:'BGH',p:16.9},{b:'Samsung',p:8.3},{b:'Likon',p:0.6}] },
+  { name:'Microondas',    tgmv:6.7,   bghPct:29.6, bghRank:'#1',  oneP:10.8, to:17.9, tres:71.3, color:'#00A650', toStatus:'active',
+    brands:[{b:'BGH',p:26.3},{b:'Tramontina',p:3.3}] },
+  { name:'Hornos',        tgmv:9.5,   bghPct:9.9,  bghRank:'#2',  oneP:7.0,  to:27.5, tres:65.5, color:'#FF6D00', toStatus:'minimal',
+    brands:[{b:'BGH',p:9.9}] },
+  { name:'Televisores',   tgmv:45.2,  bghPct:3.3,  bghRank:'#7',  oneP:0.0,  to:19.2, tres:80.8, color:'#7E22CE', toStatus:'minimal',
+    brands:[{b:'BGH',p:3.3}] },
+  { name:'Lavado',        tgmv:34.9,  bghPct:4.5,  bghRank:'#7',  oneP:34.4, to:24.9, tres:40.7, color:'#0891B2', toStatus:'minimal',
+    brands:[{b:'BGH',p:4.5}] },
+  { name:'Refrigeración', tgmv:35.6,  bghPct:3.8,  bghRank:'#10', oneP:18.0, to:22.5, tres:59.5, color:'#E53935', toStatus:'minimal',
+    brands:[{b:'BGH',p:3.8}] },
+  { name:'Mobile',        tgmv:154.4, bghPct:0.9,  bghRank:'#8',  oneP:0.0,  to:40.2, tres:59.8, color:'#94A3B8', toStatus:'minimal',
     brands:[{b:'Tecno',p:0.9}] },
 ];
 
@@ -286,7 +286,7 @@ new Chart(document.getElementById('bghBar'), {
     },
     scales: {
       x: {
-        min: 0, max: 30,
+        min: 0, max: 35,
         grid: { color: '#F3F4F6' },
         ticks: { callback: v => v + '%', font: { size: 11 }, color: '#9CA3AF' },
         border: { display: false }
