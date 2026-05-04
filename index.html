@@ -128,7 +128,7 @@
       <div class="kpi" style="--accent:#E53935">
         <div class="kpi-label">TO baja presencia</div>
         <div class="kpi-val">5 / 7</div>
-        <div class="kpi-sub">Aires A/C y Micro superan 5% TGMV</div>
+        <div class="kpi-sub">Aires A/C y Micro superan 5% del mercado</div>
       </div>
       <div class="kpi" style="--accent:#F5C518">
         <div class="kpi-label">Canal 1P Líder</div>
@@ -149,7 +149,7 @@
     <!-- BGH BRAND SHARE BAR -->
     <div class="chart-card">
       <h3>BGH Brand Share por categoría (7 categorías)</h3>
-      <div class="sub">NMV total de la MARCA / TGMV (todas las tiendas) · Aires: BGH+Samsung+Likon · Micro: BGH+Tramontina · Mobile: Tecno · Resto: BGH</div>
+      <div class="sub">Share de mercado de la MARCA (todas las tiendas) · Aires: BGH+Samsung+Likon · Micro: BGH+Tramontina · Mobile: Tecno · Resto: BGH</div>
       <div style="position:relative;width:100%;height:260px">
         <canvas id="bghBar" role="img" aria-label="BGH brand share por categoría Q1 2026. Microondas 29.6%, Aires A/C 25.8%, Hornos 9.9%, Lavado 4.5%, Televisores 3.3%, Refrigeración 3.8%, Mobile 0.9%."></canvas>
       </div>
@@ -188,7 +188,7 @@
     <!-- STACKED BAR: Brand share per category -->
     <div class="chart-card">
       <h3>Share por marca y categoría</h3>
-      <div class="sub">NMV seller / TGMV — desglosado por marca · % sobre TGMV de cada categoría</div>
+      <div class="sub">Share de mercado del seller por marca y categoría</div>
       <div style="position:relative;width:100%;height:260px">
         <canvas id="brandStack" role="img" aria-label="Barras apiladas de share de marcas del seller por categoría"></canvas>
       </div>
@@ -265,7 +265,7 @@ new Chart(document.getElementById('bghBar'), {
   data: {
     labels: sorted.map(c=>c.name),
     datasets: [{
-      label: 'BGH Share TGMV (%)',
+      label: 'Brand Share (%)',
       data: sorted.map(c=>c.bghPct),
       backgroundColor: sorted.map(c=>c.color),
       borderRadius: 6,
@@ -280,7 +280,7 @@ new Chart(document.getElementById('bghBar'), {
       legend: { display: false },
       tooltip: {
         callbacks: {
-          label: ctx => ` ${ctx.parsed.x.toFixed(1)}% del TGMV (seller total)`
+          label: ctx => ` ${ctx.parsed.x.toFixed(1)}% del mercado`
         }
       }
     },
@@ -446,7 +446,7 @@ new Chart(document.getElementById('brandPie'), {
         callbacks: {
           label: ctx => {
             const pct = (ctx.parsed / totalSellerNmv * 100).toFixed(1);
-            return ` ${ctx.label}: ${pct}% ($${ctx.parsed.toFixed(2)}B)`;
+            return ` ${ctx.label}: ${pct}%`;
           }
         }
       }
@@ -470,7 +470,7 @@ brandEntries.forEach(([brand, nmv]) => {
       <div style="background:#F3F4F6;border-radius:4px;height:5px;margin-top:3px;overflow:hidden">
         <div style="width:${pct}%;background:${color};height:100%;border-radius:4px"></div>
       </div>
-      <div style="font-size:10px;color:#9CA3AF;margin-top:2px">$${nmv.toFixed(2)}B ARS</div>
+      <div style="font-size:10px;color:#9CA3AF;margin-top:2px">&nbsp;</div>
     </div>`;
   pieLegend.appendChild(el);
 });
@@ -504,7 +504,7 @@ new Chart(document.getElementById('brandStack'), {
       },
       tooltip: {
         callbacks: {
-          label: ctx => ctx.parsed.x > 0 ? ` ${ctx.dataset.label}: ${ctx.parsed.x.toFixed(1)}% TGMV` : null
+          label: ctx => ctx.parsed.x > 0 ? ` ${ctx.dataset.label}: ${ctx.parsed.x.toFixed(1)}%` : null
         }
       }
     },
